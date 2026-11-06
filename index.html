@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>みんなで愉快なゴルフ v10.5.15 プレー専用画面版</title>
+<title>みんなで愉快なゴルフ v10.5.16 プレー専用画面版</title><link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png"><link rel="icon" type="image/png" href="./icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="愉快なゴルフ">
 <style>
 :root{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#18231d;background:#f3f6f3}
 *{box-sizing:border-box}body{margin:0;padding-bottom:86px}header{background:#174c35;color:white;padding:18px 16px}
@@ -35,11 +35,38 @@ body.play-mode header p{display:none}
 body.detail-mode main>section.card{display:none}
 body.detail-mode main>section.card.detail-visible{display:block}
 body.detail-mode .bottom{display:none}
+body.home-mode main>section.card{display:none}
+body.home-mode #homeScreen{display:block}
+body.home-mode .bottom{display:none}
+body.detail-mode #homeScreen{display:none}
+#homeScreen button{display:block;width:100%;padding:17px;margin:12px 0;border:0;border-radius:13px;font-size:17px;font-weight:700}
+.course-par-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.course-par-grid label{font-size:12px}
+.course-par-grid select{width:100%;padding:10px;border:1px solid #ccd7ce;border-radius:9px;font-size:16px}
+
 #backToPlay{display:none;margin:10px 12px;padding:12px;border:0;border-radius:10px;background:#17613f;color:#fff;font-weight:700}
 body.detail-mode #backToPlay{display:block}
 </style></head><body>
-<header><button type="button" id="appMenuButton" aria-label="メニューを開く">☰ メニュー</button><h1>⛳ みんなで愉快なゴルフ</h1><p>v10.5.15 プレー専用画面版｜ブラウザ内自動保存＋JSONバックアップ</p></header>
-<div id="menuPanel" role="dialog" aria-label="アプリメニュー" aria-modal="true"><div class="menu-inner"><button type="button" id="closeAppMenu">× 閉じる</button><button data-view="play">⛳ プレー画面</button><button data-view="settings">⚙ ラウンド設定</button><button data-view="totals">📊 途中集計</button><button data-view="final">💴 最終精算</button><button data-view="history">📋 ホール別計算明細</button><button data-view="archive">🏁 ラウンド終了・履歴</button><button data-view="backup">💾 バックアップ・復元</button><button data-view="data">🔄 新規ラウンド</button></div></div><button type="button" id="backToPlay">← プレー画面へ戻る</button><main>
+<header><button type="button" id="appMenuButton" aria-label="メニューを開く">☰ メニュー</button><h1>⛳ みんなで愉快なゴルフ</h1><p>v10.5.16 プレー専用画面版｜ブラウザ内自動保存＋JSONバックアップ</p></header>
+<div id="menuPanel" role="dialog" aria-label="アプリメニュー" aria-modal="true"><div class="menu-inner"><button type="button" id="closeAppMenu">× 閉じる</button><button data-view="home">🏠 トップ画面</button><button data-view="play">⛳ プレー画面</button><button data-view="courseEditor">🏌️ ゴルフ場登録</button><button data-view="settings">⚙ ラウンド設定</button><button data-view="totals">📊 途中集計</button><button data-view="final">💴 最終精算</button><button data-view="history">📋 ホール別計算明細</button><button data-view="archive">🏁 ラウンド終了・履歴</button><button data-view="backup">💾 バックアップ・復元</button><button data-view="data">🔄 新規ラウンド</button></div></div><button type="button" id="backToPlay">← プレー画面へ戻る</button><main>
+<section class="card" id="homeScreen">
+<h2>⛳ みんなで愉快なゴルフ</h2><p class="muted">ラウンドの準備や、ゴルフ場の事前登録ができます。</p>
+<button type="button" class="primary" data-home-view="settings">⛳ ラウンドスタート・設定</button>
+<button type="button" class="secondary" data-home-view="courseEditor">🏌️ ゴルフ場登録・PAR編集</button>
+<button type="button" class="secondary" data-home-view="archive">📚 過去のラウンド</button>
+<button type="button" class="secondary" data-home-view="play">▶ 入力中のラウンドへ</button>
+</section>
+<section class="card" id="courseEditor">
+<h2>🏌️ ゴルフ場・9ホールコース登録</h2>
+<p class="muted">ゴルフ場ごとに東・西・南・OUT・INなどの9ホールコースを自由に登録できます。各ホールのPARを保存します。</p>
+<div class="field"><label>ゴルフ場名</label><input id="editClubName" placeholder="例：〇〇カントリークラブ"></div>
+<div class="field" style="margin-top:10px"><label>9ホールコース名</label><input id="editNineName" placeholder="例：東コース"></div>
+<div id="editParGrid" class="course-par-grid" style="margin-top:12px"></div>
+<div class="actions"><button type="button" class="primary" id="saveNineCourse">この9ホールコースを保存</button><button type="button" class="secondary" id="clearNineCourse">新しいコースを入力</button></div>
+<div id="nineCourseStatus" role="status" class="muted" style="margin:10px 0"></div>
+<h2 style="margin-top:20px">登録済みのゴルフ場・コース</h2><div id="nineCourseList"></div>
+<button type="button" class="secondary" data-home-view="home" style="margin-top:12px">← トップ画面に戻る</button>
+</section>
 <section class="card" style="border:2px solid #b7d7c3" aria-label="データ保護">
 <h2>データ保護・バックアップ</h2>
 <p class="muted">入力はブラウザ内に自動保存しますが、ChatGPTのリンクから開いたHTMLでは、画面を閉じたり別バージョンを開いたりすると保存データが引き継がれない場合があります。<strong>JSONファイルを定期的に保存してください。</strong></p>
@@ -55,6 +82,11 @@ body.detail-mode #backToPlay{display:block}
 </div>
 <div class="field"><label>プレー人数</label><select id="playerCount"><option value="3">3人</option><option value="4">4人</option></select></div>
 <div class="field"><label>ゴルフ場名</label><input id="course" placeholder="ゴルフ場名を入力・検索"></div>
+<div class="field" style="margin-top:10px"><label>登録済みゴルフ場を選択</label><select id="clubSelect"><option value="">手動入力・未選択</option></select></div>
+<div class="row"><div class="field"><label>前半の9ホール</label><select id="firstNine"><option value="">未選択</option></select></div>
+<div class="field" id="secondNineWrap"><label>後半の9ホール</label><select id="secondNine"><option value="">未選択</option></select></div></div>
+<p class="muted" id="selectedCourseStatus">登録済みコースを選ぶとPARを自動入力します。9ホールの場合は前半のみ選択します。</p>
+<button type="button" class="secondary" data-home-view="courseEditor" style="margin-top:8px">＋ ゴルフ場・コースを事前登録する</button>
 <div style="margin-top:8px;padding:10px;border:1px solid #d7e1d8;border-radius:10px">
  <b>ゴルフ場・コース登録（このブラウザに保存）</b>
  <div class="actions" style="margin-top:8px"><button type="button" class="secondary" id="saveCourse">入力中のゴルフ場を登録</button></div>
@@ -288,12 +320,12 @@ function renderSettings(){
  $("adultTime").checked=!!state.adultTime;$("adultTime").onchange=e=>{state.adultTime=e.target.checked;save()};
  [["enableStroke","stroke"],["enableOlympic","olympic"],["enableLv","lv"]].forEach(([id,k])=>$(id).onchange=e=>{state.enabled[k]=e.target.checked;save()});
  $("holes").onchange=e=>{state.holes=+e.target.value;roundIndex=0;makeSequence();save()};
- $("start").onchange=e=>{state.start=e.target.value;roundIndex=0;makeSequence();save()};
+ $("start").onchange=e=>{state.start=e.target.value;state.nineClub="";state.firstNine="";state.secondNine="";roundIndex=0;makeSequence();save()};
  $("course").onchange=e=>{state.course=e.target.value;save()};
 }
 function renderHole(){
  const h=sequence[roundIndex],order=state.orders[h]||[0,1,2,3],par=state.pars[h]||4;
- $("holeCaption").textContent=`ラウンド ${roundIndex+1}/${sequence.length} ｜ コース ${h+1}番 ｜ ${adult(roundIndex)?"アダルトタイム（キャリー20点）":"通常（キャリー10点）"}`;
+ $("holeCaption").textContent=`ラウンド ${roundIndex+1}/${sequence.length} ｜ ${state.nineClub&&state.firstNine?(roundIndex<9?state.firstNine:state.secondNine)+" "+(roundIndex%9+1)+"番": "コース "+(h+1)+"番"} ｜ ${adult(roundIndex)?"アダルトタイム（キャリー20点）":"通常（キャリー10点）"}`;
  $("par").value=String(par);$("order").innerHTML=(state.playerCount===4?[[0,1,2,3],[0,1,3,2],[0,2,1,3],[0,2,3,1],[0,3,1,2],[0,3,2,1],[1,0,2,3],[1,0,3,2],[1,2,0,3],[1,2,3,0],[1,3,0,2],[1,3,2,0],[2,0,1,3],[2,0,3,1],[2,1,0,3],[2,1,3,0],[2,3,0,1],[2,3,1,0],[3,0,1,2],[3,0,2,1],[3,1,0,2],[3,1,2,0],[3,2,0,1],[3,2,1,0]]:[[0,1,2],[0,2,1],[1,0,2],[1,2,0],[2,0,1],[2,1,0]]).map(a=>`<option value="${a.join(",")}">${a.map(x=>x+1).join(" → ")}</option>`).join("");
  $("order").value=order.join(",");
  $("nav").innerHTML=sequence.map((idx,i)=>`<button data-ri="${i}" class="${i===roundIndex?"active":state.scores[idx].slice(0,state.playerCount).every(x=>x!=="")?"done":""}">${idx+1}</button>`).join("");
@@ -668,7 +700,7 @@ $("archiveRefresh").onclick=()=>{
 };
 
 function exportBackup(){
- const payload={format:"minna-golf-backup",version:"10.5.6",exportedAt:new Date().toISOString(),state,archives:readArchives(),roster:readRoster(),courses:readCourses()};
+ const payload={format:"minna-golf-backup",version:"10.5.16",nineCourses:readNineCatalog(),exportedAt:new Date().toISOString(),state,archives:readArchives(),roster:readRoster(),courses:readCourses()};
  const blob=new Blob([JSON.stringify(payload,null,2)],{type:"application/json"});
  const url=URL.createObjectURL(blob),a=document.createElement("a");
  a.href=url;a.download="みんなで愉快なゴルフ_バックアップ_"+new Date().toISOString().replace(/[:.]/g,"-")+".json";document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),30000);
@@ -733,9 +765,10 @@ $("backupApply").onclick=()=>{
   const entries=[["golfLVv6",JSON.stringify(restored)],["golfLV_archives",JSON.stringify(data.archives)]];
   if(Array.isArray(data.roster))entries.push(["golfLV_roster",JSON.stringify(data.roster)]);
   if(Array.isArray(data.courses))entries.push(["golfLV_courses",JSON.stringify(data.courses)]);
+  if(Array.isArray(data.nineCourses))entries.push([NINE_KEY,JSON.stringify(data.nineCourses)]);
   for(const [key,value] of entries)localStorage.setItem(key,value);
   state=restored;
-  roundIndex=0;makeSequence();renderAll();renderArchives();renderRosterChoices();renderCourses();
+  roundIndex=0;makeSequence();renderAll();renderArchives();renderRosterChoices();renderCourses();renderNineList();renderNineSelectors();
   $("backupStatus").textContent="復元成功：1ホール目の入力を確認してください。";
   pendingBackup=null;
   $("backupConfirm").style.display="none";
@@ -775,15 +808,75 @@ makeSequence();renderAll();renderArchives();renderRosterChoices();renderCourses(
 try{localStorage.setItem("golfLVv6",JSON.stringify(state));setSaveHealth(true)}catch(err){setSaveHealth(false,err)}
 showBackupReminder();
 // 表示切替のみ。保存データと計算処理は既存版を維持。
+
+// v10.5.16: course catalog is separate from legacy name-only registry.
+const NINE_KEY="golfLV_nineCourses";
+function readNineCatalog(){try{const v=JSON.parse(localStorage.getItem(NINE_KEY)||"[]");return Array.isArray(v)?v.filter(x=>x&&typeof x.club==="string"&&typeof x.name==="string"&&Array.isArray(x.pars)):[]}catch{return []}}
+function writeNineCatalog(items){localStorage.setItem(NINE_KEY,JSON.stringify(items));renderNineList();renderNineSelectors()}
+function editNineParGrid(values=Array(9).fill(4)){
+ $("editParGrid").innerHTML=values.map((p,i)=>`<label>${i+1}番ホール<select data-nine-par="${i}">${[3,4,5,6].map(n=>`<option value="${n}" ${Number(p)===n?"selected":""}>PAR ${n}</option>`).join("")}</select></label>`).join("");
+}
+function renderNineList(){
+ const box=$("nineCourseList"),items=readNineCatalog(),clubs=[...new Set(items.map(x=>x.club))];
+ box.innerHTML=clubs.length?clubs.map(club=>`<div style="margin:12px 0;padding:10px;background:#f3f8f4;border-radius:10px"><b>${esc(club)}</b>${items.filter(x=>x.club===club).map(x=>`<div style="display:flex;gap:6px;align-items:center;padding:7px 0;border-bottom:1px solid #dce8de"><span style="flex:1">${esc(x.name)}（PAR ${x.pars.reduce((a,b)=>a+Number(b),0)}）</span><button type="button" class="secondary" data-nine-edit="${esc(club)}" data-nine-name="${esc(x.name)}">編集</button><button type="button" class="secondary" data-nine-delete="${esc(club)}" data-nine-name="${esc(x.name)}">削除</button></div>`).join("")}</div>`).join(""):'<p class="muted">まだ登録されていません。</p>';
+ box.querySelectorAll("[data-nine-edit]").forEach(b=>b.onclick=()=>{const x=readNineCatalog().find(x=>x.club===b.dataset.nineEdit&&x.name===b.dataset.nineName);if(!x)return;$("editClubName").value=x.club;$("editNineName").value=x.name;editNineParGrid(x.pars);$("nineCourseStatus").textContent="PARを変更して「保存」を押すと上書きします。";window.scrollTo(0,0)});
+ box.querySelectorAll("[data-nine-delete]").forEach(b=>b.onclick=()=>{if(!confirm(`「${b.dataset.nineDelete} / ${b.dataset.nineName}」を削除しますか？`))return;writeNineCatalog(readNineCatalog().filter(x=>!(x.club===b.dataset.nineDelete&&x.name===b.dataset.nineName)));$("nineCourseStatus").textContent="登録コースを削除しました。ラウンド入力データは消えません。"});
+}
+$("saveNineCourse").onclick=()=>{
+ const club=$("editClubName").value.trim(),name=$("editNineName").value.trim();
+ if(!club||!name){$("nineCourseStatus").textContent="ゴルフ場名とコース名を入力してください。";return}
+ const pars=[...document.querySelectorAll("[data-nine-par]")].map(el=>Number(el.value));
+ if(pars.length!==9){$("nineCourseStatus").textContent="PAR入力欄を確認してください。";return}
+ const items=readNineCatalog(),idx=items.findIndex(x=>x.club===club&&x.name===name);
+ if(idx>=0)items[idx]={club,name,pars};else items.push({club,name,pars});
+ writeNineCatalog(items);$("nineCourseStatus").textContent=`保存しました：${club} / ${name}（9ホール）`;
+};
+$("clearNineCourse").onclick=()=>{$("editNineName").value="";editNineParGrid();$("nineCourseStatus").textContent="新しい9ホールコースを入力できます。"};
+function renderNineSelectors(){
+ const items=readNineCatalog(),clubs=[...new Set(items.map(x=>x.club))],select=$("clubSelect");
+ const selected=state.nineClub||"";
+ select.innerHTML='<option value="">手動入力・未選択</option>'+clubs.map(x=>`<option value="${esc(x)}">${esc(x)}</option>`).join("");
+ select.value=clubs.includes(selected)?selected:"";
+ const names=items.filter(x=>x.club===select.value).map(x=>x.name);
+ for(const [id,value] of [["firstNine",state.firstNine],["secondNine",state.secondNine]]){
+  const el=$(id);el.innerHTML='<option value="">選択してください</option>'+names.map(n=>`<option value="${esc(n)}">${esc(n)}</option>`).join("");
+  el.value=names.includes(value)?value:"";
+ }
+ $("secondNineWrap").style.display=Number(state.holes)===9?"none":"";
+}
+function applyNineSelection(){
+ const club=$("clubSelect").value,first=$("firstNine").value,second=$("secondNine").value,items=readNineCatalog();
+ state.nineClub=club;state.firstNine=first;state.secondNine=second;
+ const a=items.find(x=>x.club===club&&x.name===first),b=items.find(x=>x.club===club&&x.name===second);
+ state.course=club||state.course;
+ if(a&&(Number(state.holes)===9||b)){
+  // New selection uses sequential slots 0..17; calculation engine stays unchanged.
+  const newPars=[...a.pars,...(b?b.pars:Array(9).fill(4))].map(Number);
+  const changed=state.pars.some((p,i)=>p!==newPars[i]);
+  const hasScores=state.scores.some(row=>row.some(v=>v!==""));
+  if(changed&&hasScores&&!confirm("選択コースのPARを適用します。入力済みのスコアは残りますが、計算結果が変わる可能性があります。続けますか？"))return;
+  state.pars=newPars;state.start="OUT";roundIndex=0;makeSequence();
+  $("selectedCourseStatus").textContent=`PAR適用済み：${club} / ${first}${Number(state.holes)===18?" → "+second:""}`;
+ }else $("selectedCourseStatus").textContent="ゴルフ場と前半・後半のコースを選択してください（9ホールは前半のみ）。";
+ save();
+}
+$("clubSelect").onchange=()=>{state.nineClub=$("clubSelect").value;state.firstNine="";state.secondNine="";renderNineSelectors();applyNineSelection()};
+$("firstNine").onchange=applyNineSelection;
+$("secondNine").onchange=applyNineSelection;
+editNineParGrid();renderNineList();renderNineSelectors();
+document.querySelectorAll("[data-home-view]").forEach(b=>b.onclick=()=>appView(b.dataset.homeView));
+
 const appSections=[...document.querySelectorAll("main>section.card")];
 const byHeading=txt=>appSections.find(el=>el.querySelector("h2")?.textContent.includes(txt));
-const sectionByName={settings:byHeading("ラウンド設定"),play:document.querySelector(".play-section"),totals:byHeading("ラスベガス途中集計"),final:byHeading("最終精算"),history:byHeading("ホール別計算明細"),archive:byHeading("ラウンド保存"),backup:byHeading("バックアップ・復元"),data:byHeading("データ")};
+const sectionByName={home:$("homeScreen"),courseEditor:$("courseEditor"),settings:byHeading("ラウンド設定"),play:document.querySelector(".play-section"),totals:byHeading("ラスベガス途中集計"),final:byHeading("最終精算"),history:byHeading("ホール別計算明細"),archive:byHeading("ラウンド保存"),backup:byHeading("バックアップ・復元"),data:byHeading("データ")};
 function appView(view){
  document.getElementById("menuPanel").classList.remove("open");
  document.body.classList.remove("play-mode","detail-mode");
  appSections.forEach(el=>el.classList.remove("detail-visible"));
  if(view==="play")document.body.classList.add("play-mode");
- else if(view!=="settings"){
+ else if(view==="home")document.body.classList.add("home-mode");
+ else if(view==="settings"){document.body.classList.add("detail-mode");sectionByName.settings.classList.add("detail-visible");}
+ else{
   document.body.classList.add("detail-mode");
   if(sectionByName[view])sectionByName[view].classList.add("detail-visible");
  }
@@ -795,4 +888,14 @@ document.getElementById("menuPanel").addEventListener("click",e=>{if(e.target.id
 document.querySelectorAll("[data-view]").forEach(b=>b.onclick=()=>appView(b.dataset.view));
 document.getElementById("playStart").onclick=()=>appView("play");
 document.getElementById("backToPlay").onclick=()=>appView("play");
+document.body.classList.add("home-mode");
+// Fix new-round menu: show the real confirmation, not the backup section.
+document.querySelector('[data-view="data"]').onclick=()=>{
+ appView("data");$("reset").click();$("resetConfirm").scrollIntoView({block:"center"});
+};
+// Keep 9-hole selector visibility in sync with the round settings.
+$("holes").addEventListener("change",renderNineSelectors);
+const previousRenderSettings=renderSettings;
+renderSettings=function(){previousRenderSettings();renderNineSelectors()};
+
 </script></body></html>
