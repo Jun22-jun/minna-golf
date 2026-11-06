@@ -871,7 +871,7 @@ const byHeading=txt=>appSections.find(el=>el.querySelector("h2")?.textContent.in
 const sectionByName={home:$("homeScreen"),courseEditor:$("courseEditor"),settings:byHeading("ラウンド設定"),play:document.querySelector(".play-section"),totals:byHeading("ラスベガス途中集計"),final:byHeading("最終精算"),history:byHeading("ホール別計算明細"),archive:byHeading("ラウンド保存"),backup:byHeading("バックアップ・復元"),data:byHeading("データ")};
 function appView(view){
  document.getElementById("menuPanel").classList.remove("open");
- document.body.classList.remove("play-mode","detail-mode");
+ document.body.classList.remove("play-mode","detail-mode","home-mode");
  appSections.forEach(el=>el.classList.remove("detail-visible"));
  if(view==="play")document.body.classList.add("play-mode");
  else if(view==="home")document.body.classList.add("home-mode");
