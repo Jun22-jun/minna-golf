@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>みんなで愉快なゴルフ v10.5.28 プレー専用画面版</title><link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png"><link rel="icon" type="image/png" href="./icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="愉快なゴルフ">
+<title>みんなで愉快なゴルフ v10.5.27 プレー専用画面版</title><link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png"><link rel="icon" type="image/png" href="./icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="愉快なゴルフ">
 <style>
 :root{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#18231d;background:#f3f6f3}
 *{box-sizing:border-box}body{margin:0;padding-bottom:86px}header{background:#174c35;color:white;padding:18px 16px}
@@ -18,7 +18,7 @@ h2{font-size:17px;margin:0 0 12px}.row{display:grid;grid-template-columns:repeat
 /* プレー専用モード：計算ロジックや保存領域は変更しない */
 body.play-mode main>section.card:not(.play-section){display:none}
 body.play-mode .play-section{margin-top:8px}
-body.play-mode #nav,body.play-mode #teamNames,body.play-mode #calc,body.play-mode #holeMoneyPanel,body.play-mode #moneyCard,body.play-mode .bottom{display:none!important}
+body.play-mode #nav,body.play-mode #teamNames,body.play-mode #calc,body.play-mode #nearCarryStatus,body.play-mode #holeMoneyPanel,body.play-mode #moneyCard,body.play-mode .bottom{display:none!important}
 #holeLvPoints{margin-top:12px;padding:12px;border:1px solid #c6dfcd;border-radius:12px;background:#f0f7f1}
 #olympicRunningPoints{margin-top:12px;padding:12px;border:1px solid #c6dfcd;border-radius:12px;background:#f0f7f1}
 #olympicRunningPoints .point-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:9px}
@@ -55,7 +55,7 @@ body.detail-mode #homeScreen{display:none}
 #backToPlay{display:none;margin:10px 12px;padding:12px;border:0;border-radius:10px;background:#17613f;color:#fff;font-weight:700}
 body.detail-mode #backToPlay{display:block}
 </style></head><body>
-<header><button type="button" id="appMenuButton" aria-label="メニューを開く">☰ メニュー</button><h1>⛳ みんなで愉快なゴルフ</h1><p>v10.5.28 プレー専用画面版｜ブラウザ内自動保存＋JSONバックアップ</p></header>
+<header><button type="button" id="appMenuButton" aria-label="メニューを開く">☰ メニュー</button><h1>⛳ みんなで愉快なゴルフ</h1><p>v10.5.27 プレー専用画面版｜ブラウザ内自動保存＋JSONバックアップ</p></header>
 <div id="menuPanel" role="dialog" aria-label="アプリメニュー" aria-modal="true"><div class="menu-inner"><button type="button" id="closeAppMenu">× 閉じる</button><button data-view="home">🏠 トップ画面</button><button data-view="play">⛳ プレー画面</button><button data-view="courseEditor">🏌️ ゴルフ場登録</button><button data-view="settings">⚙ ラウンド設定</button><button data-view="totals">📊 途中集計</button><button data-view="final">💴 最終精算</button><button data-view="history">📋 ホール別計算明細</button><button data-view="archive">🏁 ラウンド終了・履歴</button><button data-view="backup">💾 バックアップ・復元</button><button data-view="data">🔄 新規ラウンド</button></div></div><button type="button" id="backToPlay">← プレー画面へ戻る</button><main>
 <section class="card" id="homeScreen">
 <h2>⛳ みんなで愉快なゴルフ</h2><p class="muted">ラウンドの準備や、ゴルフ場の事前登録ができます。</p>
@@ -349,7 +349,7 @@ function renderHole(){
  const awardBox=document.getElementById("awardInputs");
  if(awardBox){
   if(+state.pars[h]===3){
-   awardBox.innerHTML=`<div class="row"><div class="field"><label>ニアピン獲得者（P3のみ）</label><select id="nearWinner"><option value="-1">獲得者なし</option>${state.names.map((n,i)=>`<option value="${i}">${esc(n)}</option>`).join("")}</select></div><div class="field"><label><input type="checkbox" id="nearFine"> ニアピン罰金を発生させる（100円×本人を除く人数×キャリー回数）</label></div></div><div class="field"><label>罰金の負担者（1人）</label><select id="nearFinePayer">${state.names.map((n,i)=>`<option value="${i}">${esc(n)}</option>`).join("")}</select></div>`;
+   awardBox.innerHTML=`<div class="row"><div class="field"><label>ニアピン獲得者（P3のみ）</label><select id="nearWinner"><option value="-1">獲得者なし</option>${state.names.map((n,i)=>`<option value="${i}">${esc(n)}</option>`).join("")}</select></div><div class="field"><label><input type="checkbox" id="nearFine"> ニアピン罰金を発生させる（1人100円×受取人数×キャリー回数）</label></div></div><div class="field"><label>罰金の負担者（1人）</label><select id="nearFinePayer">${state.names.map((n,i)=>`<option value="${i}">${esc(n)}</option>`).join("")}</select></div>`;
    $("nearWinner").value=String(state.nearPin[h]??-1);$("nearFine").checked=!!state.nearFine[h];$("nearFinePayer").value=String(state.nearFinePayer[h]||0);
    $("nearWinner").onchange=e=>{state.nearPin[h]=+e.target.value;localStorage.setItem("golfLVv6",JSON.stringify(state));renderCalcOnly();renderTotals()};
    $("nearFine").onchange=e=>{state.nearFine[h]=e.target.checked;localStorage.setItem("golfLVv6",JSON.stringify(state));renderCalcOnly();renderTotals()};
@@ -446,7 +446,7 @@ function renderCalcOnly(){
   const earned=selected>=0?carryBefore+1:0;
   const carryAfter=selected>=0||state.nearFine[h]?0:carryBefore+1;
   const combined=selected>=0?thisAward[selected]+earned:0;
-  nearInfo=`<div style="margin-top:10px;padding:12px;border:2px solid #b58a36;border-radius:10px;background:#fff8e8"><b>ニアピン・賞ポイント確認（P3）</b><br>前ホールからのニアピンキャリー：${carryBefore}点<br>今回のニアピン獲得者：${selected>=0?esc(state.names[selected]):"なし"}<br>今回のニアピンポイント：${earned}点<br>今回のバーディー以上ポイント：${selected>=0?thisAward[selected]:0}点<br><strong style="font-size:19px">今回の賞ポイント合計：${selected>=0?esc(state.names[selected]):"獲得者なし"} ${combined}点</strong><br>次のP3へのキャリー：${carryAfter}点${state.nearFine[h]&&selected<0?`<br><b>キャリー分：${carryBefore}点 ／ 今回罰金分：1点 ／ 罰金合計：${carryBefore+1}点</b><br>罰金負担者：${esc(state.names[Number(state.nearFinePayer[h]||0)]||"")}<br>受取者：${state.names.filter((_,i)=>i!==Number(state.nearFinePayer[h]||0)).map(esc).join("・")}<br>受取額：1人${(carryBefore+1)*100}円 ／ 罰金総額：${(carryBefore+1)*100*(state.playerCount-1)}円<br>罰金発生：キャリーは消滅`:""}</div>`;
+  nearInfo=`<div style="margin-top:10px;padding:12px;border:2px solid #b58a36;border-radius:10px;background:#fff8e8"><b>ニアピン・賞ポイント確認（P3）</b><br>前ホールからのニアピンキャリー：${carryBefore}点<br>今回のニアピン獲得者：${selected>=0?esc(state.names[selected]):"なし"}<br>今回のニアピンポイント：${earned}点<br>今回のバーディー以上ポイント：${selected>=0?thisAward[selected]:0}点<br><strong style="font-size:19px">今回の賞ポイント合計：${selected>=0?esc(state.names[selected]):"獲得者なし"} ${combined}点</strong><br>次のP3へのキャリー：${carryAfter}点${state.nearFine[h]&&selected<0?`<br><b>キャリー分：${carryBefore}点 ／ 今回罰金分：1点 ／ 罰金合計：${carryBefore+1}点</b><br>罰金負担者：${esc(state.names[Number(state.nearFinePayer[h]||0)]||"")}<br>受取者：${state.names.filter((_,i)=>i!==Number(state.nearFinePayer[h]||0)).map(esc).join("・")}<br>受取額：1人${100*(carryBefore+1)}円 ／ 罰金総額：${100*Math.max(0,state.playerCount-1)*(carryBefore+1)}円<br>罰金発生：キャリーは消滅`:""}</div>`;
  }
  $("calc").innerHTML=`<b>チームA：</b>${sa.join("・")}打 → 基本数字 ${c.baseNumA}<br><b>チームB：</b>${sb.join("・")}打 → 基本数字 ${c.baseNumB}<br><b>特例反転後：</b>A ${c.numA} 対 B ${c.numB}（${state.lvFive?"5点対応・実数比較":"切り捨て"} ${c.compareA} 対 ${c.compareB}）<hr style="border:0;border-top:1px solid #d9e5db"><b>効果の内訳</b><br>A：${eff(c.ea)} ／ B：${eff(c.eb)}<br>Aが受ける悪影響：${c.harmA}回 ／ Bが受ける悪影響：${c.harmB}回<br>${c.net===0?"悪影響は相殺":`反転対象：チーム${c.flipTarget} ／ 残り倍増：${c.doubles}回`}<br><b>最終比較：</b>A ${c.compareA} 対 B ${c.compareB}<br><strong>${c.winner==="tie"?"引き分け":`チーム${c.winner}の勝ち・通常計算${c.points}点`}</strong><br><span class="muted">実差 ${c.rawGap} → 基本点差 ${c.gap}点 × 2^${c.doubles}</span><hr style="border:0;border-top:1px solid #d9e5db"><b>今回のバーディー以上ポイント</b><br>${awardLine}<br><span class="muted">パー${par}から何打少ないかを点数化。賞ポイント打数反映：${state.reflectAwards?"ON":"OFF"}</span>${nearInfo}${carryInfo}`;
 }
@@ -474,9 +474,9 @@ function gameResults(){
     awardRows.push({hole:h+1,type:"ニアピン獲得",player:winner,points:awarded,fine:0});
     nearCarry=0;
    }else if(state.nearFine[h]){
-    const payer=Number(state.nearFinePayer[h]||0),carryHoles=nearCarry+1,fine=100*(state.names.length-1)*carryHoles;
+    const payer=Number(state.nearFinePayer[h]||0),carryHoles=nearCarry+1,fine=100*Math.max(0,state.names.length-1)*carryHoles;
     nearFineMoney[payer]-=fine;
-    const share=100*carryHoles;
+    const share=state.names.length>1?fine/(state.names.length-1):0;
     state.names.forEach((_,person)=>{if(person!==payer)nearFineMoney[person]+=share;});
     awardRows.push({hole:h+1,type:`ニアピン罰金・${carryHoles}ホール分（他の参加者へ均等配分）`,player:payer,points:0,fine,carryHoles,share});
     nearCarry=0;
@@ -510,7 +510,7 @@ function holeMoneyBreakdown(ri){
  if(par===3){
   const winner=Number(state.nearPin[h]??-1);
   if(winner>=0&&winner<n)awards[winner]+=nearCarry+1;
-  else if(state.nearFine[h]){const payer=Number(state.nearFinePayer[h]||0),share=100*(nearCarry+1);for(let p=0;p<n;p++)fines[p]+=p===payer?-share*(n-1):share;}
+  else if(state.nearFine[h]){const payer=Number(state.nearFinePayer[h]||0),fine=100*Math.max(0,n-1)*(nearCarry+1),share=n>1?fine/(n-1):0;for(let p=0;p<n;p++)fines[p]+=p===payer?-fine:share;}
  }
  const effective=Array.from({length:n},(_,p)=>+scores[p]-(state.reflectAwards?awards[p]:0));
  const stroke=state.enabled.stroke?pairwiseBalances(effective,Number(state.strokeRate)||0):zero();
