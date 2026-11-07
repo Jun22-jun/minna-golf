@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>みんなで愉快なゴルフ v10.5.18 プレー専用画面版</title><link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png"><link rel="icon" type="image/png" href="./icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="愉快なゴルフ">
+<title>みんなで愉快なゴルフ v10.5.19 プレー専用画面版</title><link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png"><link rel="icon" type="image/png" href="./icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="愉快なゴルフ">
 <style>
 :root{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#18231d;background:#f3f6f3}
 *{box-sizing:border-box}body{margin:0;padding-bottom:86px}header{background:#174c35;color:white;padding:18px 16px}
@@ -51,7 +51,7 @@ body.detail-mode #homeScreen{display:none}
 #backToPlay{display:none;margin:10px 12px;padding:12px;border:0;border-radius:10px;background:#17613f;color:#fff;font-weight:700}
 body.detail-mode #backToPlay{display:block}
 </style></head><body>
-<header><button type="button" id="appMenuButton" aria-label="メニューを開く">☰ メニュー</button><h1>⛳ みんなで愉快なゴルフ</h1><p>v10.5.18 プレー専用画面版｜ブラウザ内自動保存＋JSONバックアップ</p></header>
+<header><button type="button" id="appMenuButton" aria-label="メニューを開く">☰ メニュー</button><h1>⛳ みんなで愉快なゴルフ</h1><p>v10.5.19 プレー専用画面版｜ブラウザ内自動保存＋JSONバックアップ</p></header>
 <div id="menuPanel" role="dialog" aria-label="アプリメニュー" aria-modal="true"><div class="menu-inner"><button type="button" id="closeAppMenu">× 閉じる</button><button data-view="home">🏠 トップ画面</button><button data-view="play">⛳ プレー画面</button><button data-view="courseEditor">🏌️ ゴルフ場登録</button><button data-view="settings">⚙ ラウンド設定</button><button data-view="totals">📊 途中集計</button><button data-view="final">💴 最終精算</button><button data-view="history">📋 ホール別計算明細</button><button data-view="archive">🏁 ラウンド終了・履歴</button><button data-view="backup">💾 バックアップ・復元</button><button data-view="data">🔄 新規ラウンド</button></div></div><button type="button" id="backToPlay">← プレー画面へ戻る</button><main>
 <section class="card" id="homeScreen">
 <h2>⛳ みんなで愉快なゴルフ</h2><p class="muted">ラウンドの準備や、ゴルフ場の事前登録ができます。</p>
@@ -353,7 +353,7 @@ function renderHole(){
  }
 
  $("scores").querySelectorAll("[data-oly]").forEach(inp=>inp.oninput=e=>{state.olympic[h][+e.target.dataset.oly]=e.target.value;localStorage.setItem("golfLVv6",JSON.stringify(state));renderTotals()});
- $("prev").disabled=roundIndex===0;$("next").disabled=roundIndex===sequence.length-1;
+ $("prev").disabled=roundIndex===0;$("next").disabled=false;$("next").textContent=roundIndex===sequence.length-1?"終了・最終精算へ →":"次のホール →";
  renderCalcOnly();
 }
 function renderNearCarryStatus(){
@@ -566,7 +566,13 @@ $("next").onclick=()=>{
    state.orders[nextHole]=prevOrder.slice();
   }
   roundIndex++;try{localStorage.setItem("golfLVv6",JSON.stringify(state));setSaveHealth(true)}catch(err){setSaveHealth(false,err)}renderAll();warnBackupProgress();
- }else renderAll();
+ }else{
+  const h=sequence[roundIndex];
+  const ready=state.scores[h].slice(0,state.playerCount).every(v=>v!==""&&Number.isFinite(Number(v))&&Number(v)>0);
+  if(!ready){alert("最終ホールの全員の打数を入力してください。");return;}
+  renderTotals();
+  appView("final");
+ }
 };
 $("summaryBtn").onclick=()=>$("totals").scrollIntoView({behavior:"smooth"});
 $("finalBtn").onclick=()=>{$("finalSettlement").scrollIntoView({behavior:"smooth",block:"center"});};
