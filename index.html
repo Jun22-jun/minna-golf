@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>みんなで愉快なゴルフ v10.5.26 プレー専用画面版</title><link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png"><link rel="icon" type="image/png" href="./icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="愉快なゴルフ">
+<title>みんなで愉快なゴルフ v10.5.27 プレー専用画面版</title><link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png"><link rel="icon" type="image/png" href="./icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="愉快なゴルフ">
 <style>
 :root{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#18231d;background:#f3f6f3}
 *{box-sizing:border-box}body{margin:0;padding-bottom:86px}header{background:#174c35;color:white;padding:18px 16px}
@@ -55,7 +55,7 @@ body.detail-mode #homeScreen{display:none}
 #backToPlay{display:none;margin:10px 12px;padding:12px;border:0;border-radius:10px;background:#17613f;color:#fff;font-weight:700}
 body.detail-mode #backToPlay{display:block}
 </style></head><body>
-<header><button type="button" id="appMenuButton" aria-label="メニューを開く">☰ メニュー</button><h1>⛳ みんなで愉快なゴルフ</h1><p>v10.5.26 プレー専用画面版｜ブラウザ内自動保存＋JSONバックアップ</p></header>
+<header><button type="button" id="appMenuButton" aria-label="メニューを開く">☰ メニュー</button><h1>⛳ みんなで愉快なゴルフ</h1><p>v10.5.27 プレー専用画面版｜ブラウザ内自動保存＋JSONバックアップ</p></header>
 <div id="menuPanel" role="dialog" aria-label="アプリメニュー" aria-modal="true"><div class="menu-inner"><button type="button" id="closeAppMenu">× 閉じる</button><button data-view="home">🏠 トップ画面</button><button data-view="play">⛳ プレー画面</button><button data-view="courseEditor">🏌️ ゴルフ場登録</button><button data-view="settings">⚙ ラウンド設定</button><button data-view="totals">📊 途中集計</button><button data-view="final">💴 最終精算</button><button data-view="history">📋 ホール別計算明細</button><button data-view="archive">🏁 ラウンド終了・履歴</button><button data-view="backup">💾 バックアップ・復元</button><button data-view="data">🔄 新規ラウンド</button></div></div><button type="button" id="backToPlay">← プレー画面へ戻る</button><main>
 <section class="card" id="homeScreen">
 <h2>⛳ みんなで愉快なゴルフ</h2><p class="muted">ラウンドの準備や、ゴルフ場の事前登録ができます。</p>
@@ -556,7 +556,8 @@ function renderTotals(){
  }).join("");
  const final=$("finalSettlement");
  if(final){
-  final.innerHTML=`<div class="tablewrap"><table><thead><tr><th>参加者</th><th>打数精算</th><th>賞ポイント</th><th>オリンピック累計点</th><th>オリンピック</th><th>ラスベガス</th><th>ニアピン罰金</th><th>合計</th></tr></thead><tbody>${state.names.map((n,p)=>{
+  const strokeDetail=state.enabled.stroke?`<h3 style="margin:6px 0 8px">⛳ 打数・ハンデ確認</h3><div class="tablewrap"><table><thead><tr><th>参加者</th><th>累計打数</th><th>ハンデ</th><th>賞控除</th><th>差引打数</th><th>打数精算</th></tr></thead><tbody>${state.names.map((n,p)=>`<tr><td>${esc(n)}</td><td>${g.strokeGross[p]}打</td><td>${Number(state.handicaps[p])||0}打</td><td>${g.strokeBonus[p]}打</td><td><b>${g.strokeNet[p]}打</b></td><td><b>${yen(g.strokeMoney[p])}</b></td></tr>`).join("")}</tbody></table></div><p class="muted">差引打数＝累計打数−ハンデ−賞控除。各参加者との打数差を1打${Number(state.strokeRate)||0}円で個別精算します。</p>`:"";
+  final.innerHTML=strokeDetail+`<h3 style="margin:14px 0 8px">💴 精算合計</h3><div class="tablewrap"><table><thead><tr><th>参加者</th><th>打数精算</th><th>賞ポイント</th><th>オリンピック累計点</th><th>オリンピック</th><th>ラスベガス</th><th>ニアピン罰金</th><th>合計</th></tr></thead><tbody>${state.names.map((n,p)=>{
    const st=state.enabled.stroke?g.strokeMoney[p]:0,ol=state.enabled.olympic?g.olympicMoney[p]:0,lv=state.enabled.lv?g.lvMoney[p]:0,fine=g.nearFineMoney[p]||0,total=st+ol+lv+fine;
    return `<tr><td>${esc(n)}</td><td>${yen(st)}</td><td>${g.birdiePoints[p]+g.nearPoints[p]}点</td><td>${state.enabled.olympic?(g.olympicNet[p]>0?"+":"")+g.olympicNet[p]+"点":"—"}</td><td>${yen(ol)}</td><td>${yen(lv)}</td><td>${yen(fine)}</td><td><b>${yen(total)}</b></td></tr>`;
   }).join("")}</tbody></table></div><p class="muted">打数：総打数 − ハンデ −（賞ポイント反映ON時のバーディー・ニアピン点）の差を参加者間で精算。オリンピック：本人累計点×${state.playerCount-1} − 他の参加者の累計点。ラスベガス：個人累計点×単価。ニアピン未決着キャリー：${g.nearCarry}点。</p><div class="tablewrap"><table><thead><tr><th>ホール</th><th>賞の内容</th><th>対象者</th><th>点数</th><th>罰金</th></tr></thead><tbody>${g.awardRows.map(x=>`<tr><td>${x.hole}</td><td>${x.type}</td><td>${x.player>=0?esc(state.names[x.player]):"—"}</td><td>${x.points}</td><td>${x.fine?yen(-x.fine):"—"}</td></tr>`).join("")||"<tr><td colspan='5'>賞の記録はありません</td></tr>"}</tbody></table></div>`;
