@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>みんなで愉快なゴルフ v10.5.17 プレー専用画面版</title><link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png"><link rel="icon" type="image/png" href="./icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="愉快なゴルフ">
+<title>みんなで愉快なゴルフ v10.5.18 プレー専用画面版</title><link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png"><link rel="icon" type="image/png" href="./icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="愉快なゴルフ">
 <style>
 :root{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#18231d;background:#f3f6f3}
 *{box-sizing:border-box}body{margin:0;padding-bottom:86px}header{background:#174c35;color:white;padding:18px 16px}
@@ -19,6 +19,10 @@ h2{font-size:17px;margin:0 0 12px}.row{display:grid;grid-template-columns:repeat
 body.play-mode main>section.card:not(.play-section){display:none}
 body.play-mode .play-section{margin-top:8px}
 body.play-mode #nav,body.play-mode #teamNames,body.play-mode #calc,body.play-mode #nearCarryStatus,body.play-mode #holeMoneyPanel,body.play-mode #moneyCard,body.play-mode .bottom{display:none!important}
+#holeLvPoints{margin-top:12px;padding:12px;border:1px solid #c6dfcd;border-radius:12px;background:#f0f7f1}
+#holeLvPoints .point-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:9px}
+#holeLvPoints .point-cell{background:white;border-radius:9px;padding:9px;text-align:center}
+#holeLvPoints .point-cell strong{font-size:21px}
 body.play-mode #awardInputs{padding:10px;margin:8px 0}
 body.play-mode .score input{font-size:22px;min-height:48px}
 body.play-mode .score{padding:9px}
@@ -47,7 +51,7 @@ body.detail-mode #homeScreen{display:none}
 #backToPlay{display:none;margin:10px 12px;padding:12px;border:0;border-radius:10px;background:#17613f;color:#fff;font-weight:700}
 body.detail-mode #backToPlay{display:block}
 </style></head><body>
-<header><button type="button" id="appMenuButton" aria-label="メニューを開く">☰ メニュー</button><h1>⛳ みんなで愉快なゴルフ</h1><p>v10.5.17 プレー専用画面版｜ブラウザ内自動保存＋JSONバックアップ</p></header>
+<header><button type="button" id="appMenuButton" aria-label="メニューを開く">☰ メニュー</button><h1>⛳ みんなで愉快なゴルフ</h1><p>v10.5.18 プレー専用画面版｜ブラウザ内自動保存＋JSONバックアップ</p></header>
 <div id="menuPanel" role="dialog" aria-label="アプリメニュー" aria-modal="true"><div class="menu-inner"><button type="button" id="closeAppMenu">× 閉じる</button><button data-view="home">🏠 トップ画面</button><button data-view="play">⛳ プレー画面</button><button data-view="courseEditor">🏌️ ゴルフ場登録</button><button data-view="settings">⚙ ラウンド設定</button><button data-view="totals">📊 途中集計</button><button data-view="final">💴 最終精算</button><button data-view="history">📋 ホール別計算明細</button><button data-view="archive">🏁 ラウンド終了・履歴</button><button data-view="backup">💾 バックアップ・復元</button><button data-view="data">🔄 新規ラウンド</button></div></div><button type="button" id="backToPlay">← プレー画面へ戻る</button><main>
 <section class="card" id="homeScreen">
 <h2>⛳ みんなで愉快なゴルフ</h2><p class="muted">ラウンドの準備や、ゴルフ場の事前登録ができます。</p>
@@ -122,6 +126,7 @@ body.detail-mode #backToPlay{display:block}
 <div id="teamNames" class="muted" style="margin:8px 0"></div>
 <div class="scoregrid" id="scores"></div>
 <div id="nearCarryStatus" role="status" style="display:none;margin-top:10px;padding:12px;border:2px solid #b58a36;border-radius:10px;background:#fff8e8"></div>
+<div id="holeLvPoints" role="status" aria-live="polite"></div>
 <div id="awardInputs" class="card" style="background:#f7faf7;margin-top:10px"></div>
 <div class="result" id="calc" style="margin-top:12px">4人分の打数を入力すると計算します。</div>
 <div class="card" id="moneyCard" style="margin-top:12px;background:#f7faf7"><h3 style="margin:0 0 8px">精算明細の確認</h3><div class="actions" style="margin:0 0 10px"><button type="button" id="showHoleMoney" class="primary">このホール</button><button type="button" id="showRoundMoney" class="secondary">ラウンド累計</button></div><div id="holeMoneyPanel"></div></div>
@@ -369,7 +374,27 @@ function renderNearCarryStatus(){
  box.innerHTML=`<b>⛳ ニアピンキャリー状況</b><br>${message}`;
  box.style.display="block";
 }
+function renderHoleLvPoints(){
+ const panel=$("holeLvPoints");
+ if(!state.enabled.lv){panel.style.display="none";return;}
+ panel.style.display="block";
+ const row=roundResults().rows[roundIndex];
+ if(!row||!row.ready){panel.innerHTML="<b>⛳ 今回のラスベガス</b><p class=\"muted\">全員の打数を入力すると、今回の点数を表示します。</p>";return;}
+ let values=state.names.map(()=>0);
+ if(row.winner==="A"||row.winner==="B"){
+  const winners=row.winner==="A"?row.A:row.B, losers=row.winner==="A"?row.B:row.A;
+  winners.forEach(p=>values[p]=row.points*(winners.length===1?2:1));
+  losers.forEach(p=>values[p]=-row.points*(losers.length===1?2:1));
+ }
+ const cells=values.map((v,i)=>`<div class="point-cell"><div>${esc(state.names[i])}</div><strong style="color:${v<0?"#a04a2b":"#17613f"}">${v>0?"+":""}${v}点</strong></div>`).join("");
+ let detail="";
+ if(row.winner==="tie")detail=row.isFinal?"最終ホール引き分け・精算0点":`引き分け・累積キャリー ${row.carry}点`;
+ else if(row.usedCarry>0)detail=`通常点差 ${row.points-row.usedCarry}点 ＋ キャリー ${row.usedCarry}点 ＝ ${row.points}点`;
+ else detail=`今回の決着 ${row.points}点${adult(roundIndex)?"（アダルトタイム適用）":""}`;
+ panel.innerHTML=`<b>⛳ 今回のラスベガス</b><div class="point-grid">${cells}</div><p class="muted" style="margin-bottom:0">${detail}</p>`;
+}
 function renderCalcOnly(){
+ renderHoleLvPoints();
  renderNearCarryStatus();
  const h=sequence[roundIndex],order=state.orders[h],scores=state.scores[h],ready=scores.slice(0,state.playerCount).length===state.playerCount&&scores.slice(0,state.playerCount).every(x=>x!==""&&Number(x)>0);
  if(!ready){$("calc").innerHTML=`${state.playerCount}人分の打数を入力すると、反転・倍増・キャリーを自動計算します。`;return}
