@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>みんなで愉快なゴルフ v10.5.19 プレー専用画面版</title><link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png"><link rel="icon" type="image/png" href="./icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="愉快なゴルフ">
+<title>みんなで愉快なゴルフ v10.5.20 プレー専用画面版</title><link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png"><link rel="icon" type="image/png" href="./icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="愉快なゴルフ">
 <style>
 :root{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#18231d;background:#f3f6f3}
 *{box-sizing:border-box}body{margin:0;padding-bottom:86px}header{background:#174c35;color:white;padding:18px 16px}
@@ -20,6 +20,10 @@ body.play-mode main>section.card:not(.play-section){display:none}
 body.play-mode .play-section{margin-top:8px}
 body.play-mode #nav,body.play-mode #teamNames,body.play-mode #calc,body.play-mode #nearCarryStatus,body.play-mode #holeMoneyPanel,body.play-mode #moneyCard,body.play-mode .bottom{display:none!important}
 #holeLvPoints{margin-top:12px;padding:12px;border:1px solid #c6dfcd;border-radius:12px;background:#f0f7f1}
+#olympicRunningPoints{margin-top:12px;padding:12px;border:1px solid #c6dfcd;border-radius:12px;background:#f0f7f1}
+#olympicRunningPoints .point-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:9px}
+#olympicRunningPoints .point-cell{background:white;border-radius:9px;padding:9px;text-align:center}
+#olympicRunningPoints .point-cell strong{font-size:21px}
 #holeLvPoints .point-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:9px}
 #holeLvPoints .point-cell{background:white;border-radius:9px;padding:9px;text-align:center}
 #holeLvPoints .point-cell strong{font-size:21px}
@@ -51,7 +55,7 @@ body.detail-mode #homeScreen{display:none}
 #backToPlay{display:none;margin:10px 12px;padding:12px;border:0;border-radius:10px;background:#17613f;color:#fff;font-weight:700}
 body.detail-mode #backToPlay{display:block}
 </style></head><body>
-<header><button type="button" id="appMenuButton" aria-label="メニューを開く">☰ メニュー</button><h1>⛳ みんなで愉快なゴルフ</h1><p>v10.5.19 プレー専用画面版｜ブラウザ内自動保存＋JSONバックアップ</p></header>
+<header><button type="button" id="appMenuButton" aria-label="メニューを開く">☰ メニュー</button><h1>⛳ みんなで愉快なゴルフ</h1><p>v10.5.20 プレー専用画面版｜ブラウザ内自動保存＋JSONバックアップ</p></header>
 <div id="menuPanel" role="dialog" aria-label="アプリメニュー" aria-modal="true"><div class="menu-inner"><button type="button" id="closeAppMenu">× 閉じる</button><button data-view="home">🏠 トップ画面</button><button data-view="play">⛳ プレー画面</button><button data-view="courseEditor">🏌️ ゴルフ場登録</button><button data-view="settings">⚙ ラウンド設定</button><button data-view="totals">📊 途中集計</button><button data-view="final">💴 最終精算</button><button data-view="history">📋 ホール別計算明細</button><button data-view="archive">🏁 ラウンド終了・履歴</button><button data-view="backup">💾 バックアップ・復元</button><button data-view="data">🔄 新規ラウンド</button></div></div><button type="button" id="backToPlay">← プレー画面へ戻る</button><main>
 <section class="card" id="homeScreen">
 <h2>⛳ みんなで愉快なゴルフ</h2><p class="muted">ラウンドの準備や、ゴルフ場の事前登録ができます。</p>
@@ -127,6 +131,7 @@ body.detail-mode #backToPlay{display:block}
 <div class="scoregrid" id="scores"></div>
 <div id="nearCarryStatus" role="status" style="display:none;margin-top:10px;padding:12px;border:2px solid #b58a36;border-radius:10px;background:#fff8e8"></div>
 <div id="holeLvPoints" role="status" aria-live="polite"></div>
+<div id="olympicRunningPoints" role="status" aria-live="polite"></div>
 <div id="awardInputs" class="card" style="background:#f7faf7;margin-top:10px"></div>
 <div class="result" id="calc" style="margin-top:12px">4人分の打数を入力すると計算します。</div>
 <div class="card" id="moneyCard" style="margin-top:12px;background:#f7faf7"><h3 style="margin:0 0 8px">精算明細の確認</h3><div class="actions" style="margin:0 0 10px"><button type="button" id="showHoleMoney" class="primary">このホール</button><button type="button" id="showRoundMoney" class="secondary">ラウンド累計</button></div><div id="holeMoneyPanel"></div></div>
@@ -352,7 +357,7 @@ function renderHole(){
   }else awardBox.innerHTML=`<p class="muted">ニアピン入力はパー3のホールのみです。</p>`;
  }
 
- $("scores").querySelectorAll("[data-oly]").forEach(inp=>inp.oninput=e=>{state.olympic[h][+e.target.dataset.oly]=e.target.value;localStorage.setItem("golfLVv6",JSON.stringify(state));renderTotals()});
+ $("scores").querySelectorAll("[data-oly]").forEach(inp=>inp.oninput=e=>{state.olympic[h][+e.target.dataset.oly]=e.target.value;localStorage.setItem("golfLVv6",JSON.stringify(state));renderOlympicRunningPoints();renderTotals()});
  $("prev").disabled=roundIndex===0;$("next").disabled=false;$("next").textContent=roundIndex===sequence.length-1?"終了・最終精算へ →":"次のホール →";
  renderCalcOnly();
 }
@@ -393,6 +398,18 @@ function renderHoleLvPoints(){
  else detail=`今回の決着 ${row.points}点${adult(roundIndex)?"（アダルトタイム適用）":""}`;
  panel.innerHTML=`<b>⛳ 今回のラスベガス</b><div class="point-grid">${cells}</div><p class="muted" style="margin-bottom:0">${detail}</p>`;
 }
+function renderOlympicRunningPoints(){
+ const panel=$("olympicRunningPoints");
+ if(!state.enabled.olympic){panel.style.display="none";return;}
+ panel.style.display="block";
+ const raw=state.names.map((_,p)=>sequence.slice(0,roundIndex+1).reduce((sum,h)=>{
+  const v=state.olympic[h]?.[p];return sum+(v!==""&&Number.isFinite(Number(v))?Number(v):0);
+ },0));
+ const total=raw.reduce((a,b)=>a+b,0);
+ const points=raw.map(v=>v*state.playerCount-total);
+ panel.innerHTML=`<b>🏅 オリンピック累計点数（${roundIndex+1}ホール目まで）</b><div class="point-grid">${points.map((v,i)=>`<div class="point-cell"><div>${esc(state.names[i])}</div><strong style="color:${v<0?"#a04a2b":"#17613f"}">${v>0?"+":""}${v}点</strong></div>`).join("")}</div><p class="muted" style="margin-bottom:0">金額は最終精算画面で確認できます。</p>`;
+}
+
 function renderCalcOnly(){
  renderHoleLvPoints();
  renderNearCarryStatus();
@@ -529,9 +546,9 @@ function renderTotals(){
  }).join("");
  const final=$("finalSettlement");
  if(final){
-  final.innerHTML=`<div class="tablewrap"><table><thead><tr><th>参加者</th><th>打数精算</th><th>賞ポイント</th><th>オリンピック</th><th>ラスベガス</th><th>ニアピン罰金</th><th>合計</th></tr></thead><tbody>${state.names.map((n,p)=>{
+  final.innerHTML=`<div class="tablewrap"><table><thead><tr><th>参加者</th><th>打数精算</th><th>賞ポイント</th><th>オリンピック累計点</th><th>オリンピック</th><th>ラスベガス</th><th>ニアピン罰金</th><th>合計</th></tr></thead><tbody>${state.names.map((n,p)=>{
    const st=state.enabled.stroke?g.strokeMoney[p]:0,ol=state.enabled.olympic?g.olympicMoney[p]:0,lv=state.enabled.lv?g.lvMoney[p]:0,fine=g.nearFineMoney[p]||0,total=st+ol+lv+fine;
-   return `<tr><td>${esc(n)}</td><td>${yen(st)}</td><td>${g.birdiePoints[p]+g.nearPoints[p]}点</td><td>${yen(ol)}</td><td>${yen(lv)}</td><td>${yen(fine)}</td><td><b>${yen(total)}</b></td></tr>`;
+   return `<tr><td>${esc(n)}</td><td>${yen(st)}</td><td>${g.birdiePoints[p]+g.nearPoints[p]}点</td><td>${state.enabled.olympic?(g.olympicNet[p]>0?"+":"")+g.olympicNet[p]+"点":"—"}</td><td>${yen(ol)}</td><td>${yen(lv)}</td><td>${yen(fine)}</td><td><b>${yen(total)}</b></td></tr>`;
   }).join("")}</tbody></table></div><p class="muted">打数：総打数 − ハンデ −（賞ポイント反映ON時のバーディー・ニアピン点）の差を参加者間で精算。オリンピック：本人累計点×${state.playerCount-1} − 他の参加者の累計点。ラスベガス：個人累計点×単価。ニアピン未決着キャリー：${g.nearCarry}点。</p><div class="tablewrap"><table><thead><tr><th>ホール</th><th>賞の内容</th><th>対象者</th><th>点数</th><th>罰金</th></tr></thead><tbody>${g.awardRows.map(x=>`<tr><td>${x.hole}</td><td>${x.type}</td><td>${x.player>=0?esc(state.names[x.player]):"—"}</td><td>${x.points}</td><td>${x.fine?yen(-x.fine):"—"}</td></tr>`).join("")||"<tr><td colspan='5'>賞の記録はありません</td></tr>"}</tbody></table></div>`;
  }
 }
