@@ -1,16 +1,16 @@
 <!doctype html>
 <html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>みんなで愉快なゴルフ v10.5.19 プレー専用画面版</title><link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png"><link rel="icon" type="image/png" href="./icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="愉快なゴルフ">
+<title>みんなで愉快なゴルフ v10.5.25 プレー専用画面版</title><link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png"><link rel="icon" type="image/png" href="./icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="愉快なゴルフ">
 <style>
 :root{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#18231d;background:#f3f6f3}
 *{box-sizing:border-box}body{margin:0;padding-bottom:86px}header{background:#174c35;color:white;padding:18px 16px}
 header h1{font-size:21px;margin:0 0 5px}header p{font-size:12px;margin:0;opacity:.9}
 main{max-width:900px;margin:auto;padding:12px}.card{background:white;border-radius:15px;padding:16px;margin:12px 0;box-shadow:0 2px 10px #163b2510}
 h2{font-size:17px;margin:0 0 12px}.row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:9px 0}
-.field label{display:block;font-size:12px;color:#526158;margin-bottom:5px}.field input,.field select,.score input{width:100%;padding:10px;border:1px solid #ccd7ce;border-radius:9px;background:#fff;font-size:16px;min-width:0}
+.field label{display:block;font-size:12px;color:#526158;margin-bottom:5px}.field input,.field select,.score input,.score select{width:100%;padding:10px;border:1px solid #ccd7ce;border-radius:9px;background:#fff;font-size:16px;min-width:0}
 .players{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.player{display:flex;align-items:center;gap:8px}.player b{width:20px}.player input{min-width:0;width:100%;padding:9px;border:1px solid #ccd7ce;border-radius:8px;font-size:15px}
 .nav{display:flex;gap:6px;overflow:auto;padding:4px 0 10px}.nav button{flex:0 0 38px;padding:8px 0;border:1px solid #ccd7ce;border-radius:8px;background:#fff}.nav button.active{background:#174c35;color:white;border-color:#174c35}.nav button.done{border-color:#4d9c70}
-.scoregrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.score{border:1px solid #e0e8e1;border-radius:11px;padding:10px}.score label{font-size:13px;font-weight:650;display:block;margin-bottom:6px}.score input{font-size:20px;text-align:center}
+.scoregrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.score{border:1px solid #e0e8e1;border-radius:11px;padding:10px}.score label{font-size:13px;font-weight:650;display:block;margin-bottom:6px}.score input,.score select{font-size:20px;text-align:center}
 .actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.actions button,.bottom button{border:0;border-radius:10px;padding:11px 15px;font-size:14px;font-weight:650;cursor:pointer}.primary{background:#17613f;color:white}.secondary{background:#eaf0eb;color:#214b35}
 .muted{font-size:12px;color:#68766d;line-height:1.55}.pill{display:inline-block;border-radius:999px;background:#e9f2eb;padding:4px 9px;font-size:12px;margin:2px}.result{background:#f0f6f1;border-radius:12px;padding:12px;line-height:1.7}.result strong{font-size:21px}.good{color:#17613f}.bad{color:#a04a2b}.metricgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.metric{background:#f5f8f5;padding:10px;border-radius:10px}.metric small{display:block;color:#66746b}.metric b{font-size:19px}.tablewrap{overflow:auto}table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:8px;border-bottom:1px solid #e3e9e4;text-align:left;white-space:nowrap}th{background:#f4f7f4}.bottom{position:fixed;bottom:0;left:0;right:0;background:#ffffffed;backdrop-filter:blur(8px);padding:10px max(12px,calc((100vw - 876px)/2));display:flex;gap:8px;border-top:1px solid #e0e7e1}.bottom button{flex:1}.hide{display:none}
 @media(min-width:700px){.scoregrid{grid-template-columns:repeat(4,minmax(0,1fr))}.players{grid-template-columns:repeat(4,minmax(0,1fr))}}
@@ -20,11 +20,15 @@ body.play-mode main>section.card:not(.play-section){display:none}
 body.play-mode .play-section{margin-top:8px}
 body.play-mode #nav,body.play-mode #teamNames,body.play-mode #calc,body.play-mode #nearCarryStatus,body.play-mode #holeMoneyPanel,body.play-mode #moneyCard,body.play-mode .bottom{display:none!important}
 #holeLvPoints{margin-top:12px;padding:12px;border:1px solid #c6dfcd;border-radius:12px;background:#f0f7f1}
+#olympicRunningPoints{margin-top:12px;padding:12px;border:1px solid #c6dfcd;border-radius:12px;background:#f0f7f1}
+#olympicRunningPoints .point-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:9px}
+#olympicRunningPoints .point-cell{background:white;border-radius:9px;padding:9px;text-align:center}
+#olympicRunningPoints .point-cell strong{font-size:21px}
 #holeLvPoints .point-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:9px}
 #holeLvPoints .point-cell{background:white;border-radius:9px;padding:9px;text-align:center}
 #holeLvPoints .point-cell strong{font-size:21px}
 body.play-mode #awardInputs{padding:10px;margin:8px 0}
-body.play-mode .score input{font-size:22px;min-height:48px}
+body.play-mode .score input,body.play-mode .score select{font-size:22px;min-height:48px}
 body.play-mode .score{padding:9px}
 body.play-mode main{padding:8px}
 body.play-mode header{padding:12px 16px}
@@ -51,7 +55,7 @@ body.detail-mode #homeScreen{display:none}
 #backToPlay{display:none;margin:10px 12px;padding:12px;border:0;border-radius:10px;background:#17613f;color:#fff;font-weight:700}
 body.detail-mode #backToPlay{display:block}
 </style></head><body>
-<header><button type="button" id="appMenuButton" aria-label="メニューを開く">☰ メニュー</button><h1>⛳ みんなで愉快なゴルフ</h1><p>v10.5.19 プレー専用画面版｜ブラウザ内自動保存＋JSONバックアップ</p></header>
+<header><button type="button" id="appMenuButton" aria-label="メニューを開く">☰ メニュー</button><h1>⛳ みんなで愉快なゴルフ</h1><p>v10.5.25 プレー専用画面版｜ブラウザ内自動保存＋JSONバックアップ</p></header>
 <div id="menuPanel" role="dialog" aria-label="アプリメニュー" aria-modal="true"><div class="menu-inner"><button type="button" id="closeAppMenu">× 閉じる</button><button data-view="home">🏠 トップ画面</button><button data-view="play">⛳ プレー画面</button><button data-view="courseEditor">🏌️ ゴルフ場登録</button><button data-view="settings">⚙ ラウンド設定</button><button data-view="totals">📊 途中集計</button><button data-view="final">💴 最終精算</button><button data-view="history">📋 ホール別計算明細</button><button data-view="archive">🏁 ラウンド終了・履歴</button><button data-view="backup">💾 バックアップ・復元</button><button data-view="data">🔄 新規ラウンド</button></div></div><button type="button" id="backToPlay">← プレー画面へ戻る</button><main>
 <section class="card" id="homeScreen">
 <h2>⛳ みんなで愉快なゴルフ</h2><p class="muted">ラウンドの準備や、ゴルフ場の事前登録ができます。</p>
@@ -127,14 +131,15 @@ body.detail-mode #backToPlay{display:block}
 <div class="scoregrid" id="scores"></div>
 <div id="nearCarryStatus" role="status" style="display:none;margin-top:10px;padding:12px;border:2px solid #b58a36;border-radius:10px;background:#fff8e8"></div>
 <div id="holeLvPoints" role="status" aria-live="polite"></div>
+<div id="olympicRunningPoints" role="status" aria-live="polite"></div>
 <div id="awardInputs" class="card" style="background:#f7faf7;margin-top:10px"></div>
 <div class="result" id="calc" style="margin-top:12px">4人分の打数を入力すると計算します。</div>
 <div class="card" id="moneyCard" style="margin-top:12px;background:#f7faf7"><h3 style="margin:0 0 8px">精算明細の確認</h3><div class="actions" style="margin:0 0 10px"><button type="button" id="showHoleMoney" class="primary">このホール</button><button type="button" id="showRoundMoney" class="secondary">ラウンド累計</button></div><div id="holeMoneyPanel"></div></div>
 <div class="actions"><button class="secondary" id="prev">← 前</button><button class="primary" id="next">次のホール →</button></div>
 </section>
 <section class="card">
-<h2>ラスベガス途中集計</h2><div class="metricgrid" id="totals"></div>
-<p class="muted">4人時は勝ち負け各人に同じ点数を加減算します。3人時は2人チームが各1倍、1人チームは勝ちでも負けでも2倍として、全員の収支が必ず一致するように精算します。キャリー発生ホールは点数を付けず、決着時にキャリー分を精算します。</p>
+<h2>途中集計</h2><div class="metricgrid" id="totals"></div>
+<p class="muted">実施中のゲームだけを表示します。金額は最終精算画面で確認できます。</p>
 </section>
 <section class="card">
 <h2>最終精算（途中確認）</h2><div id="finalSettlement"></div>
@@ -339,7 +344,7 @@ function renderHole(){
  $("order").onchange=e=>{state.orders[h]=e.target.value.split(",").map(Number);save();renderAll()};
  const teamA=state.playerCount===4?[order[0],order[3]]:[order[0],order[2]],teamB=state.playerCount===4?[order[1],order[2]]:[order[1]];
  $("teamNames").innerHTML=`<span class="pill">チームA：${teamA.map(p=>esc(state.names[p])).join("＋")}</span><span class="pill">チームB：${teamB.map(p=>esc(state.names[p])).join("＋")}${state.playerCount===3?"（1人・打数を2桁表示）":""}</span>`;
- $("scores").innerHTML=state.names.map((name,p)=>`<div class="score"><label>${p+1}番：${esc(name)}</label>${state.enabled.stroke?`<input data-p="${p}" class="strokeInput" type="number" min="1" max="20" inputmode="numeric" placeholder="打数" value="${esc(state.scores[h][p])}">`:""}${state.enabled.olympic?`<input data-oly="${p}" type="number" min="-5" max="5" inputmode="numeric" placeholder="オリンピック点" value="${esc(state.olympic[h][p])}" style="margin-top:6px">`:""}</div>`).join("");
+ $("scores").innerHTML=state.names.map((name,p)=>`<div class="score"><label>${p+1}番：${esc(name)}</label>${(state.enabled.stroke||state.enabled.lv)?`<input data-p="${p}" class="strokeInput" type="number" min="1" max="20" inputmode="numeric" placeholder="打数" value="${esc(state.scores[h][p])}">`:""}${state.enabled.olympic?`<select data-oly="${p}" aria-label="${esc(name)}のオリンピック点" style="margin-top:6px;font-size:20px;min-height:48px;text-align:center"><option value="">点数を選択</option>${Array.from({length:16},(_,i)=>i-10).map(v=>`<option value="${v}" ${String(state.olympic[h][p])===String(v)?"selected":""}>${v>0?"+":""}${v}点</option>`).join("")}</select>`:""}</div>`).join("");
  $("scores").querySelectorAll("[data-p]").forEach(inp=>inp.oninput=e=>{state.scores[h][+e.target.dataset.p]=e.target.value;localStorage.setItem("golfLVv6",JSON.stringify(state));renderCalcOnly();renderTotals()});
  const awardBox=document.getElementById("awardInputs");
  if(awardBox){
@@ -352,7 +357,7 @@ function renderHole(){
   }else awardBox.innerHTML=`<p class="muted">ニアピン入力はパー3のホールのみです。</p>`;
  }
 
- $("scores").querySelectorAll("[data-oly]").forEach(inp=>inp.oninput=e=>{state.olympic[h][+e.target.dataset.oly]=e.target.value;localStorage.setItem("golfLVv6",JSON.stringify(state));renderTotals()});
+ $("scores").querySelectorAll("[data-oly]").forEach(inp=>inp.onchange=e=>{state.olympic[h][+e.target.dataset.oly]=e.target.value;localStorage.setItem("golfLVv6",JSON.stringify(state));renderOlympicRunningPoints();renderTotals()});
  $("prev").disabled=roundIndex===0;$("next").disabled=false;$("next").textContent=roundIndex===sequence.length-1?"終了・最終精算へ →":"次のホール →";
  renderCalcOnly();
 }
@@ -393,8 +398,21 @@ function renderHoleLvPoints(){
  else detail=`今回の決着 ${row.points}点${adult(roundIndex)?"（アダルトタイム適用）":""}`;
  panel.innerHTML=`<b>⛳ 今回のラスベガス</b><div class="point-grid">${cells}</div><p class="muted" style="margin-bottom:0">${detail}</p>`;
 }
+function renderOlympicRunningPoints(){
+ const panel=$("olympicRunningPoints");
+ if(!state.enabled.olympic){panel.style.display="none";return;}
+ panel.style.display="block";
+ const raw=state.names.map((_,p)=>sequence.slice(0,roundIndex+1).reduce((sum,h)=>{
+  const v=state.olympic[h]?.[p];return sum+(v!==""&&Number.isFinite(Number(v))?Number(v):0);
+ },0));
+ const total=raw.reduce((a,b)=>a+b,0);
+ const points=raw.map(v=>v*state.playerCount-total);
+ panel.innerHTML=`<b>🏅 オリンピック累計点数（${roundIndex+1}ホール目まで）</b><div class="point-grid">${points.map((v,i)=>`<div class="point-cell"><div>${esc(state.names[i])}</div><strong style="color:${v<0?"#a04a2b":"#17613f"}">${v>0?"+":""}${v}点</strong></div>`).join("")}</div><p class="muted" style="margin-bottom:0">金額は最終精算画面で確認できます。</p>`;
+}
+
 function renderCalcOnly(){
  renderHoleLvPoints();
+ renderOlympicRunningPoints();
  renderNearCarryStatus();
  const h=sequence[roundIndex],order=state.orders[h],scores=state.scores[h],ready=scores.slice(0,state.playerCount).length===state.playerCount&&scores.slice(0,state.playerCount).every(x=>x!==""&&Number(x)>0);
  if(!ready){$("calc").innerHTML=`${state.playerCount}人分の打数を入力すると、反転・倍増・キャリーを自動計算します。`;return}
@@ -520,8 +538,17 @@ function renderMoneyPanel(){
 function renderTotals(){
  renderMoneyPanel();
  const r=roundResults(),g=gameResults();
- $("totals").innerHTML=state.names.map((n,p)=>`<div class="metric"><small>${esc(n)}</small><b>${r.totals[p]>0?"+":""}${r.totals[p]}点</b><small>ラスベガス</small></div>`).join("")+`<div class="metric"><small>未決着キャリー</small><b>${r.carry}点</b></div>`+
- `<div style="grid-column:1/-1;margin-top:8px"><h3 style="margin:4px 0 8px">オリンピック途中集計（点数・金額）</h3><div class="metricgrid">${state.names.map((n,p)=>`<div class="metric"><small>${esc(n)}</small><b>${g.olympicNet[p]>0?"+":""}${g.olympicNet[p]}点</b><small>${yen(g.olympicMoney[p])}</small></div>`).join("")}</div></div>`;
+ const blocks=[];
+ if(state.enabled.stroke){
+  blocks.push(`<div style="grid-column:1/-1"><h3 style="margin:4px 0 8px">⛳ 打数途中集計</h3><div class="metricgrid">${state.names.map((n,p)=>`<div class="metric"><small>${esc(n)}</small><b>${g.strokeGross[p]}打</b><small>ハンデ ${Number(state.handicaps[p])||0}打 ／ 賞控除 ${g.strokeBonus[p]}打</small><small>差引 ${g.strokeNet[p]}打</small></div>`).join("")}</div></div>`);
+ }
+ if(state.enabled.lv){
+  blocks.push(`<div style="grid-column:1/-1"><h3 style="margin:4px 0 8px">🎲 ラスベガス途中集計</h3><div class="metricgrid">${state.names.map((n,p)=>`<div class="metric"><small>${esc(n)}</small><b>${r.totals[p]>0?"+":""}${r.totals[p]}点</b></div>`).join("")}<div class="metric"><small>未決着キャリー</small><b>${r.carry}点</b></div></div></div>`);
+ }
+ if(state.enabled.olympic){
+  blocks.push(`<div style="grid-column:1/-1"><h3 style="margin:4px 0 8px">🏅 オリンピック途中集計</h3><div class="metricgrid">${state.names.map((n,p)=>`<div class="metric"><small>${esc(n)}</small><b>${g.olympicNet[p]>0?"+":""}${g.olympicNet[p]}点</b></div>`).join("")}</div></div>`);
+ }
+ $("totals").innerHTML=blocks.join("")||'<p class="muted">実施中のゲームはありません。</p>';
  $("history").innerHTML=r.rows.map(x=>{
   if(!x.ready)return `<tr><td>${x.ri+1}</td><td>${x.h+1}</td><td colspan="6">未入力</td></tr>`;
   const teamA=x.A.map(p=>state.names[p]).join("＋"),teamB=x.B.map(p=>state.names[p]).join("＋");
@@ -529,9 +556,9 @@ function renderTotals(){
  }).join("");
  const final=$("finalSettlement");
  if(final){
-  final.innerHTML=`<div class="tablewrap"><table><thead><tr><th>参加者</th><th>打数精算</th><th>賞ポイント</th><th>オリンピック</th><th>ラスベガス</th><th>ニアピン罰金</th><th>合計</th></tr></thead><tbody>${state.names.map((n,p)=>{
+  final.innerHTML=`<div class="tablewrap"><table><thead><tr><th>参加者</th><th>打数精算</th><th>賞ポイント</th><th>オリンピック累計点</th><th>オリンピック</th><th>ラスベガス</th><th>ニアピン罰金</th><th>合計</th></tr></thead><tbody>${state.names.map((n,p)=>{
    const st=state.enabled.stroke?g.strokeMoney[p]:0,ol=state.enabled.olympic?g.olympicMoney[p]:0,lv=state.enabled.lv?g.lvMoney[p]:0,fine=g.nearFineMoney[p]||0,total=st+ol+lv+fine;
-   return `<tr><td>${esc(n)}</td><td>${yen(st)}</td><td>${g.birdiePoints[p]+g.nearPoints[p]}点</td><td>${yen(ol)}</td><td>${yen(lv)}</td><td>${yen(fine)}</td><td><b>${yen(total)}</b></td></tr>`;
+   return `<tr><td>${esc(n)}</td><td>${yen(st)}</td><td>${g.birdiePoints[p]+g.nearPoints[p]}点</td><td>${state.enabled.olympic?(g.olympicNet[p]>0?"+":"")+g.olympicNet[p]+"点":"—"}</td><td>${yen(ol)}</td><td>${yen(lv)}</td><td>${yen(fine)}</td><td><b>${yen(total)}</b></td></tr>`;
   }).join("")}</tbody></table></div><p class="muted">打数：総打数 − ハンデ −（賞ポイント反映ON時のバーディー・ニアピン点）の差を参加者間で精算。オリンピック：本人累計点×${state.playerCount-1} − 他の参加者の累計点。ラスベガス：個人累計点×単価。ニアピン未決着キャリー：${g.nearCarry}点。</p><div class="tablewrap"><table><thead><tr><th>ホール</th><th>賞の内容</th><th>対象者</th><th>点数</th><th>罰金</th></tr></thead><tbody>${g.awardRows.map(x=>`<tr><td>${x.hole}</td><td>${x.type}</td><td>${x.player>=0?esc(state.names[x.player]):"—"}</td><td>${x.points}</td><td>${x.fine?yen(-x.fine):"—"}</td></tr>`).join("")||"<tr><td colspan='5'>賞の記録はありません</td></tr>"}</tbody></table></div>`;
  }
 }
