@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>みんなで愉快なゴルフ v10.5.16 プレー専用画面版</title><link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png"><link rel="icon" type="image/png" href="./icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="愉快なゴルフ">
+<title>みんなで愉快なゴルフ v10.5.17 プレー専用画面版</title><link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png"><link rel="icon" type="image/png" href="./icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="愉快なゴルフ">
 <style>
 :root{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#18231d;background:#f3f6f3}
 *{box-sizing:border-box}body{margin:0;padding-bottom:86px}header{background:#174c35;color:white;padding:18px 16px}
@@ -47,7 +47,7 @@ body.detail-mode #homeScreen{display:none}
 #backToPlay{display:none;margin:10px 12px;padding:12px;border:0;border-radius:10px;background:#17613f;color:#fff;font-weight:700}
 body.detail-mode #backToPlay{display:block}
 </style></head><body>
-<header><button type="button" id="appMenuButton" aria-label="メニューを開く">☰ メニュー</button><h1>⛳ みんなで愉快なゴルフ</h1><p>v10.5.16 プレー専用画面版｜ブラウザ内自動保存＋JSONバックアップ</p></header>
+<header><button type="button" id="appMenuButton" aria-label="メニューを開く">☰ メニュー</button><h1>⛳ みんなで愉快なゴルフ</h1><p>v10.5.17 プレー専用画面版｜ブラウザ内自動保存＋JSONバックアップ</p></header>
 <div id="menuPanel" role="dialog" aria-label="アプリメニュー" aria-modal="true"><div class="menu-inner"><button type="button" id="closeAppMenu">× 閉じる</button><button data-view="home">🏠 トップ画面</button><button data-view="play">⛳ プレー画面</button><button data-view="courseEditor">🏌️ ゴルフ場登録</button><button data-view="settings">⚙ ラウンド設定</button><button data-view="totals">📊 途中集計</button><button data-view="final">💴 最終精算</button><button data-view="history">📋 ホール別計算明細</button><button data-view="archive">🏁 ラウンド終了・履歴</button><button data-view="backup">💾 バックアップ・復元</button><button data-view="data">🔄 新規ラウンド</button></div></div><button type="button" id="backToPlay">← プレー画面へ戻る</button><main>
 <section class="card" id="homeScreen">
 <h2>⛳ みんなで愉快なゴルフ</h2><p class="muted">ラウンドの準備や、ゴルフ場の事前登録ができます。</p>
@@ -144,7 +144,7 @@ body.detail-mode #backToPlay{display:block}
 </section>
 <section class="card"><h2>ラウンド保存・過去の履歴</h2><div class="actions"><button class="primary" id="archiveSave">ラウンド終了・保存</button><button class="secondary" id="archiveRefresh">履歴を更新</button></div><div id="archiveStatus" role="status" style="display:none;margin-top:10px;padding:10px;border:1px solid #23804a;border-radius:8px;background:#edf8f0;color:#155b32;font-weight:700"></div><div id="archiveList" style="margin-top:12px"></div><p class="muted">「ラウンド終了・保存」で精算結果と全ホールの入力内容を履歴に保存します。保存後も現在の入力データは消えません。履歴はこのブラウザ内に保存され、別端末への自動同期はありません。</p></section>
 <section class="card"><h2>バックアップ・復元</h2><div class="actions"><button class="secondary" id="backupExport">バックアップを書き出す</button><button class="secondary" id="backupImport">バックアップを読み込む</button><input id="backupFile" type="file" accept="application/json,.json" style="max-width:100%;margin-top:8px"></div><p class="muted">ファイルを選んだ後、下に処理状況が表示されます。<span id="backupDebug"></span></p><p class="muted">バージョンの異なるHTMLファイルへ移る場合は、先にバックアップを書き出し、新しい版で読み込んでください。ラウンド入力と保存済み履歴をまとめて移せます。</p><div id="backupStatus" role="status" style="margin-top:8px"></div><div id="backupConfirm" style="display:none;margin-top:12px;padding:12px;border:2px solid #23804a;border-radius:10px"><strong>バックアップを復元しますか？</strong><p class="muted">現在の入力データと保存履歴を置き換えます。元のデータが必要な場合は先にバックアップを書き出してください。</p><div class="actions"><button type="button" class="primary" id="backupApply">復元する</button><button type="button" class="secondary" id="backupCancel">戻る</button></div></div></section>
-<section class="card"><h2>データ</h2><div class="actions"><button class="secondary" id="csv">CSVを書き出す</button><button class="secondary" id="reset">新規ラウンド</button></div><div id="resetConfirm" style="display:none;margin-top:12px;padding:12px;border:2px solid #ad6c17;border-radius:10px"><strong>新しいラウンドを開始しますか？</strong><p class="muted">現在のラウンドの入力を初期化します。保存済みの名簿・ゴルフ場・過去の履歴は残します。現在のラウンドを残す場合は、先にJSONバックアップを保存してください。</p><div class="actions"><button type="button" class="primary" id="resetApply">新規ラウンドを開始</button><button type="button" class="secondary" id="resetCancel">戻る</button></div></div><div id="resetStatus" role="status" style="margin-top:8px"></div><p class="muted">入力はブラウザ内に自動保存されます。</p></section>
+<section class="card" id="roundDataSection"><h2>データ</h2><div class="actions"><button class="secondary" id="csv">CSVを書き出す</button><button class="secondary" id="reset">新規ラウンド</button></div><div id="resetConfirm" style="display:none;margin-top:12px;padding:12px;border:2px solid #ad6c17;border-radius:10px"><strong>新しいラウンドを開始しますか？</strong><p class="muted">現在のラウンドの入力を初期化します。保存済みの名簿・ゴルフ場・過去の履歴は残します。現在のラウンドを残す場合は、先にJSONバックアップを保存してください。</p><div class="actions"><button type="button" class="primary" id="resetApply">新規ラウンドを開始</button><button type="button" class="secondary" id="resetCancel">戻る</button></div></div><div id="resetStatus" role="status" style="margin-top:8px"></div><p class="muted">入力はブラウザ内に自動保存されます。</p></section>
 </main>
 <div class="bottom"><button class="secondary" id="summaryBtn">途中集計</button><button class="primary" id="finalBtn">最終結果</button></div>
 <script>
@@ -700,7 +700,7 @@ $("archiveRefresh").onclick=()=>{
 };
 
 function exportBackup(){
- const payload={format:"minna-golf-backup",version:"10.5.16",nineCourses:readNineCatalog(),exportedAt:new Date().toISOString(),state,archives:readArchives(),roster:readRoster(),courses:readCourses()};
+ const payload={format:"minna-golf-backup",version:"10.5.17",nineCourses:readNineCatalog(),exportedAt:new Date().toISOString(),state,archives:readArchives(),roster:readRoster(),courses:readCourses()};
  const blob=new Blob([JSON.stringify(payload,null,2)],{type:"application/json"});
  const url=URL.createObjectURL(blob),a=document.createElement("a");
  a.href=url;a.download="みんなで愉快なゴルフ_バックアップ_"+new Date().toISOString().replace(/[:.]/g,"-")+".json";document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),30000);
@@ -800,6 +800,7 @@ $("resetApply").onclick=()=>{
   state=fresh();roundIndex=0;makeSequence();save();
   $("resetConfirm").style.display="none";
   $("resetStatus").textContent="新規ラウンドを開始しました。人数・ホール数などを設定してください。";
+  appView("settings");
   window.scrollTo({top:0,behavior:"smooth"});
  }catch(err){$("resetStatus").textContent="初期化エラー："+(err?.message||String(err));}
 };
@@ -868,7 +869,7 @@ document.querySelectorAll("[data-home-view]").forEach(b=>b.onclick=()=>appView(b
 
 const appSections=[...document.querySelectorAll("main>section.card")];
 const byHeading=txt=>appSections.find(el=>el.querySelector("h2")?.textContent.includes(txt));
-const sectionByName={home:$("homeScreen"),courseEditor:$("courseEditor"),settings:byHeading("ラウンド設定"),play:document.querySelector(".play-section"),totals:byHeading("ラスベガス途中集計"),final:byHeading("最終精算"),history:byHeading("ホール別計算明細"),archive:byHeading("ラウンド保存"),backup:byHeading("バックアップ・復元"),data:byHeading("データ")};
+const sectionByName={home:$("homeScreen"),courseEditor:$("courseEditor"),settings:byHeading("ラウンド設定"),play:document.querySelector(".play-section"),totals:byHeading("ラスベガス途中集計"),final:byHeading("最終精算"),history:byHeading("ホール別計算明細"),archive:byHeading("ラウンド保存"),backup:byHeading("バックアップ・復元"),data:$("roundDataSection")};
 function appView(view){
  document.getElementById("menuPanel").classList.remove("open");
  document.body.classList.remove("play-mode","detail-mode","home-mode");
@@ -891,7 +892,10 @@ document.getElementById("backToPlay").onclick=()=>appView("play");
 document.body.classList.add("home-mode");
 // Fix new-round menu: show the real confirmation, not the backup section.
 document.querySelector('[data-view="data"]').onclick=()=>{
- appView("data");$("reset").click();$("resetConfirm").scrollIntoView({block:"center"});
+ appView("data");
+ $("resetConfirm").style.display="block";
+ $("resetStatus").textContent="新規ラウンド開始の確認待ちです。";
+ $("resetConfirm").scrollIntoView({block:"center"});
 };
 // Keep 9-hole selector visibility in sync with the round settings.
 $("holes").addEventListener("change",renderNineSelectors);
