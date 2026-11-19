@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>みんなで愉快なゴルフ v10.5.46 イラスト版</title><link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png"><link rel="icon" type="image/png" href="./icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="愉快なゴルフ">
+<title>みんなで愉快なゴルフ v10.5.47 イラスト版</title><link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png"><link rel="icon" type="image/png" href="./icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="愉快なゴルフ">
 <style>
 :root{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#18231d;background:#f3f6f3}
 *{box-sizing:border-box}body{margin:0;padding-bottom:86px}header{background:#174c35;color:white;padding:18px 16px}
@@ -260,11 +260,16 @@ let lastBackupAt=null;
 function showBackupReminder(){const el=$("backupReminder");if(!el)return;el.textContent=lastBackupAt?"この画面で最後にバックアップを実行："+lastBackupAt+"。ファイルがダウンロードされたか確認してください。":"まだこの画面でバックアップを保存していません。作業開始時と数ホールごと、バージョン更新前に保存してください。"}
 function warnBackupProgress(){if(roundIndex>0 && roundIndex%3===0){$("backupReminder").textContent="現在"+(roundIndex+1)+"ホール目。念のため、今のデータをJSONバックアップしてください。"}}
 
-// ラスベガスの基本数字：打順は無関係。チーム内の打数を必ず小さい順に並べる。
-function teamScore(strokes){
+// ラスベガス基本数字：頭の打数 ×10 ＋ 末尾1桁。末尾は基本点に影響しない。
+// 2桁同士でも「12・14」なら頭12→120（反転時は頭14→140）。
+// 5点対応以外では比較する前に1の位を切り捨てる。
+function teamScore(strokes, reversed=false){
  const sorted=strokes.map(v=>Number(v)).sort((a,b)=>a-b);
- const digits=sorted.join("");
- return sorted.length===1?digits+digits:digits;
+ if(sorted.length===1)return String(sorted[0]*11);
+ const head=reversed?sorted[sorted.length-1]:sorted[0];
+ const tail=reversed?sorted[0]:sorted[sorted.length-1];
+ // 打数が2桁以上の場合も、頭を10倍した「何十何」の基本構造を保持。
+ return String(head*10+(tail%10));
 }
 function teamEffects(strokes,par){
  let good=0,bad=0;
@@ -280,8 +285,8 @@ function calcHole(par, teamA, teamB){
  let numA=teamScore(teamA),numB=teamScore(teamB),flipTarget="なし",effectCount=Math.abs(net);
  // 基本数字は並べ替え後・特例反転前。numA/numBは反転適用後の比較数字。
  const baseNumA=numA,baseNumB=numB;
- if(net>0){numA=numA.split("").reverse().join("");flipTarget="A"}
- if(net<0){numB=numB.split("").reverse().join("");flipTarget="B"}
+ if(net>0){numA=teamScore(teamA,true);flipTarget="A"}
+ if(net<0){numB=teamScore(teamB,true);flipTarget="B"}
  const cutA=Math.floor(Number(numA)/10)*10,cutB=Math.floor(Number(numB)/10)*10;
  const compareA=state.lvFive?Number(numA):cutA,compareB=state.lvFive?Number(numB):cutB;
  const rawGap=Math.abs(compareA-compareB);
@@ -827,7 +832,10 @@ function renderTests(){
  [4,[5,5],[3,6],20,"B"],[3,[3,4],[4,5],20,"A"],[3,[3,5],[4,5],10,"A"],
  [5,[3,4],[5,7],320,"A"],[5,[5,5],[5,6],0,"tie"],
  [4,[3,6],[4,6],30,"A"],[4,[3,3],[4,5],40,"A"],[4,[3,3],[4,6],120,"A"],
- [5,[2,5],[5,7],400,"A"]
+ [5,[2,5],[5,7],400,"A"],
+ // 2桁スコアの基本点と、従来の倍率を確認。
+ [4,[4,14],[5,5],90,"B"],
+ [4,[12,14],[5,5],180,"B"]
  ];
  $("tests").innerHTML=`<tr><td>4人基本数字</td><td>4-5</td><td>5-4</td><td>45対45</td><td style="color:${fourPlayerBase?"#17613f":"#b34b2d"}">${fourPlayerBase?"45対45 ✓":"要確認"}</td></tr>`+tests.map(t=>{const c=calcHole(t[0],t[1],t[2]);const ok=c.points===t[3]&&c.winner===t[4];return `<tr><td>${t[0]}</td><td>${t[1].join("-")}</td><td>${t[2].join("-")}</td><td>${t[3]}点</td><td style="color:${ok?"#17613f":"#b34b2d"}">${c.points}点 ${ok?"✓":"要確認"}</td></tr>`}).join("");
 }
