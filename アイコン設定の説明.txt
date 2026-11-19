@@ -1,0 +1,4 @@
+iPhone用アイコンを同梱した版です。
+index.html、apple-touch-icon.png、icon.png、icon-512.pngを同じ場所に置き、Safariで表示してください。
+旧ホーム画面アイコンを削除し、Safariの共有から「ホーム画面に追加」で登録し直してください。
+既存のスコアデータを消さないよう、更新前にJSONバックアップを保存してください。
